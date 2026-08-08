@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>待办清单</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="app-header">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="5" width="6" height="6" rx="1"></rect>
+            <path d="m5 7.5 1 1 2-2"></path>
+            <path d="M13 6h8"></path>
+            <path d="M13 11h8"></path>
+            <rect x="3" y="14" width="6" height="6" rx="1"></rect>
+            <path d="m5 16.5 1 1 2-2"></path>
+            <path d="M13 15h8"></path>
+            <path d="M13 20h8"></path>
+          </svg>
+        </span>
+        <div class="brand-text">
+          <h1>今日待办</h1>
+          <p id="todayLabel"></p>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <div class="progress-summary">
+          <div class="progress-meta">
+            <span id="progressText">暂无任务</span>
+            <strong id="progressPercent">0%</strong>
+          </div>
+          <div class="progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="progressTrack">
+            <div class="progress-bar" id="progressBar"></div>
+          </div>
+        </div>
+        <button type="button" class="icon-button" id="clearCompleted" title="清空已完成" aria-label="清空已完成" disabled>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 6h18"></path>
+            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"></path>
+            <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+            <line x1="10" x2="10" y1="11" y2="17"></line>
+            <line x1="14" x2="14" y1="11" y2="17"></line>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <main class="app-main">
+      <section class="composer" aria-label="新建任务">
+        <form id="addForm" class="composer-row">
+          <span class="priority-dot priority-medium" id="composerPriorityDot" aria-hidden="true"></span>
+          <input
+            type="text"
+            id="taskTitle"
+            class="title-input"
+            placeholder="添加新任务..."
+            maxlength="200"
+            autocomplete="off"
+            aria-label="任务内容"
+          >
+          <input
+            type="date"
+            id="taskDue"
+            class="due-input"
+            aria-label="截止日期"
+            title="截止日期"
+          >
+          <div class="priority-picker" id="priorityPicker" role="radiogroup" aria-label="优先级" title="优先级">
+            <button type="button" class="priority-option priority-high" data-priority="high" role="radio" aria-checked="false" aria-label="高优先级" title="高优先级">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path>
+                <line x1="4" x2="4" y1="22" y2="15"></line>
+              </svg>
+              <span>高</span>
+            </button>
+            <button type="button" class="priority-option priority-medium is-selected" data-priority="medium" role="radio" aria-checked="true" aria-label="中优先级" title="中优先级">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path>
+                <line x1="4" x2="4" y1="22" y2="15"></line>
+              </svg>
+              <span>中</span>
+            </button>
+            <button type="button" class="priority-option priority-low" data-priority="low" role="radio" aria-checked="false" aria-label="低优先级" title="低优先级">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path>
+                <line x1="4" x2="4" y1="22" y2="15"></line>
+              </svg>
+              <span>低</span>
+            </button>
+          </div>
+          <button type="submit" class="primary-button" id="addTask" aria-label="添加任务" title="添加任务">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 12h14"></path>
+              <path d="M12 5v14"></path>
+            </svg>
+          </button>
+        </form>
+
+        <div class="toolbar">
+          <div class="segmented" role="tablist" aria-label="任务筛选">
+            <button type="button" class="segment is-active" data-filter="all" role="tab" aria-selected="true">全部</button>
+            <button type="button" class="segment" data-filter="active" role="tab" aria-selected="false">未完成</button>
+            <button type="button" class="segment" data-filter="done" role="tab" aria-selected="false">已完成</button>
+          </div>
+          <div class="toolbar-actions">
+            <label class="search-wrap" title="搜索任务">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="11" cy="11" r="8"></circle>
+                <path d="m21 21-4.3-4.3"></path>
+              </svg>
+              <input type="search" id="searchInput" placeholder="搜索任务" aria-label="搜索任务">
+            </label>
+            <select id="sortOrder" class="sort-select" aria-label="排序方式" title="排序方式">
+              <option value="created">最新创建</option>
+              <option value="due">截止日期</option>
+              <option value="priority">优先级</option>
+            </select>
+          </div>
+        </div>
+      </section>
+
+      <section class="list-section" aria-label="任务列表">
+        <div class="list-heading">
+          <h2 id="listTitle">全部任务</h2>
+          <span class="list-count" id="listCount">0 项</span>
+        </div>
+        <ul class="task-list" id="taskList"></ul>
+        <div class="empty-state" id="emptyState" hidden>
+          <span class="empty-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="22 12 16 12 14 15 10 15 8 12 2 12"></polyline>
+              <path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"></path>
+            </svg>
+          </span>
+          <p id="emptyText">暂无任务</p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
